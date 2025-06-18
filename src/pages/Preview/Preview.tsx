@@ -2,25 +2,49 @@ import { useResume } from '../../hooks/useResume';
 import { Download, Printer, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import NotificationModal from '../../components/NotificationModal';
+import Header from './components/Header';
+import PersonalStatement from './components/PersonalStatement';
+import Experience from './components/Experience';
+import Education from './components/Education';
+import Skills from './components/Skills';
+import SidebarSkills from './components/SidebarSkills';
+import SidebarEducation from './components/SidebarEducation';
+import './preview-markdown.css';
 
 // Simple markdown renderer for basic formatting
 const renderMarkdown = (text: string) => {
   if (!text) return '';
-  
-  return text
-    .split('\n')
-    .map((line) => {
-      // Handle bold text
-      line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Handle italic text
-      line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      // Handle bullet points
-      if (line.trim().startsWith('- ')) {
-        line = `<li>${line.trim().substring(2)}</li>`;
+  const lines = text.split('\n');
+  let html = '';
+  let inList = false;
+
+  lines.forEach((line) => {
+    // Handle bullet points
+    if (line.trim().startsWith('- ')) {
+      if (!inList) {
+        html += '<ul>';
+        inList = true;
       }
-      return line;
-    })
-    .join('<br />');
+      const content = line.trim().substring(2)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+      html += `<li>${content}</li>`;
+    } else {
+      if (inList) {
+        html += '</ul>';
+        inList = false;
+      }
+      // Handle bold and italic for non-list lines
+      const formatted = line
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+      if (formatted.trim() !== '') {
+        html += formatted + '<br />';
+      }
+    }
+  });
+  if (inList) html += '</ul>';
+  return html;
 };
 
 const Preview = () => {
@@ -47,217 +71,58 @@ const Preview = () => {
     alert('PDF download functionality will be implemented soon!');
   };
 
-  // Section renderers
-  const renderHeader = () => (
-    <div className="border-b-2 border-gray-300 pb-6 mb-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {personalInfo.firstName} {personalInfo.lastName}
-          </h1>
-          {personalInfo.title && (
-            <p className="text-xl text-gray-600 mb-2">{personalInfo.title}</p>
-          )}
-          {personalInfo.location && (
-            <p className="text-gray-600">{personalInfo.location}</p>
-          )}
-        </div>
-        {showContactDetails && (
-          <div className="text-right text-sm text-gray-600">
-            {personalInfo.email && (
-              <p className="mb-1">{personalInfo.email}</p>
-            )}
-            {personalInfo.phone && (
-              <p className="mb-1">{personalInfo.phone}</p>
-            )}
-            {personalInfo.website && (
-              <p className="mb-1">
-                <a href={personalInfo.website} target="_blank" rel="noopener noreferrer" 
-                   className="text-blue-600 hover:underline">
-                  {personalInfo.website.replace(/^https?:\/\//, '')}
-                </a>
-              </p>
-            )}
-            {(personalInfo.github || personalInfo.linkedin) && (
-              <div className="mt-2">
-                {personalInfo.github && (
-                  <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:underline block">
-                    GitHub
-                  </a>
-                )}
-                {personalInfo.linkedin && (
-                  <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-600 hover:underline block">
-                    LinkedIn
-                  </a>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  const renderPersonalStatement = () => personalInfo.personalStatement && (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-3 border-b border-gray-200 pb-1">
-        Professional Summary
-      </h2>
-      <div 
-        className="text-gray-700 leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(personalInfo.personalStatement) }}
-      />
-    </div>
-  );
-
-  const renderExperience = () => experience.length > 0 && experience[0].jobTitle && (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-        Professional Experience
-      </h2>
-      <div className="space-y-4">
-        {experience.map((exp) => (
-          <div key={exp.id} className="mb-4">
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <h3 className="font-semibold text-lg text-gray-800">{exp.jobTitle}</h3>
-                <p className="text-gray-600">{exp.company}</p>
-              </div>
-              <div className="text-right text-sm text-gray-600">
-                <p>{formatDate(exp.startDate)} - {formatDate(exp.endDate)}</p>
-                {exp.location && <p>{exp.location}</p>}
-              </div>
-            </div>
-            {exp.description && (
-              <div 
-                className="text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(exp.description) }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderEducation = () => education.length > 0 && education[0].degree && (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-        Education
-      </h2>
-      <div className="space-y-4">
-        {education.map((edu) => (
-          <div key={edu.id} className="mb-4">
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <h3 className="font-semibold text-lg text-gray-800">{edu.degree}</h3>
-                <p className="text-gray-600">{edu.institution}</p>
-              </div>
-              <div className="text-right text-sm text-gray-600">
-                <p>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</p>
-                {edu.location && <p>{edu.location}</p>}
-                {edu.gpa && <p>GPA: {edu.gpa}</p>}
-              </div>
-            </div>
-            {edu.description && (
-              <div 
-                className="text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(edu.description) }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderSkills = () => skills.length > 0 && skills.some(cat => cat.skills.some(skill => skill.name)) && (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-        Skills & Certifications
-      </h2>
-      <div className="space-y-4">
-        {skills.map((category) => {
-          const validSkills = category.skills.filter(skill => skill.name);
-          if (validSkills.length === 0) return null;
-          return (
-            <div key={category.id} className="mb-4">
-              <h3 className="font-semibold text-lg text-gray-800 mb-2">{category.name}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {validSkills.map((skill) => (
-                  <div key={skill.id} className="mb-3">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-medium text-gray-800">{skill.name}</span>
-                      {skill.proficiency && (
-                        <span className="text-sm text-gray-600">{skill.proficiency}</span>
-                      )}
-                    </div>
-                    {skill.description && (
-                      <div 
-                        className="text-sm text-gray-700 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: renderMarkdown(skill.description) }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-
   // Layouts
   const renderClassic = () => (
     <div>
-      {renderHeader()}
-      {renderPersonalStatement()}
-      {renderExperience()}
-      {renderEducation()}
-      {renderSkills()}
+      <Header personalInfo={personalInfo} showContactDetails={showContactDetails} />
+      <PersonalStatement personalStatement={personalInfo.personalStatement} renderMarkdown={renderMarkdown} />
+      <Experience experience={experience} formatDate={formatDate} renderMarkdown={renderMarkdown} />
+      <Education education={education} formatDate={formatDate} renderMarkdown={renderMarkdown} />
+      <Skills skills={skills} renderMarkdown={renderMarkdown} />
     </div>
   );
 
-  const renderSidebar = () => (
+  // Sidebar Left layout
+  const renderSidebarLeft = () => (
     <div>
-      {renderHeader()}
-      {renderPersonalStatement()}
+      <Header personalInfo={personalInfo} showContactDetails={showContactDetails} />
+      <PersonalStatement personalStatement={personalInfo.personalStatement} renderMarkdown={renderMarkdown} />
       <div className="flex flex-col md:flex-row gap-8">
         <div className="md:w-1/3 w-full">
-          {renderEducation()}
-          {renderSkills()}
+          <SidebarSkills skills={skills} />
+          <SidebarEducation education={education} />
         </div>
         <div className="md:w-2/3 w-full">
-          {renderExperience()}
+          <Experience experience={experience} formatDate={formatDate} renderMarkdown={renderMarkdown} />
         </div>
       </div>
     </div>
   );
 
-  const renderModern = () => (
-    <div className="flex flex-col md:flex-row gap-8">
-      <div className="md:w-1/2 w-full">
-        {renderHeader()}
-        {renderSkills()}
-      </div>
-      <div className="md:w-1/2 w-full">
-        {renderPersonalStatement()}
-        {renderExperience()}
-        {renderEducation()}
+  // Sidebar Right layout
+  const renderSidebarRight = () => (
+    <div>
+      <Header personalInfo={personalInfo} showContactDetails={showContactDetails} />
+      <PersonalStatement personalStatement={personalInfo.personalStatement} renderMarkdown={renderMarkdown} />
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-2/3 w-full">
+          <Experience experience={experience} formatDate={formatDate} renderMarkdown={renderMarkdown} />
+        </div>
+        <div className="md:w-1/3 w-full">
+          <SidebarSkills skills={skills} />
+          <SidebarEducation education={education} />
+        </div>
       </div>
     </div>
   );
 
   let content;
   switch (template) {
-    case 'sidebar':
-      content = renderSidebar();
+    case 'sidebar-left':
+      content = renderSidebarLeft();
       break;
-    case 'modern':
-      content = renderModern();
+    case 'sidebar-right':
+      content = renderSidebarRight();
       break;
     case 'classic':
     default:
@@ -326,57 +191,6 @@ const Preview = () => {
           {content}
         </div>
       </div>
-
-      {/* Print Styles */}
-      <style>{`
-        @media print {
-          .print\\:shadow-none {
-            box-shadow: none !important;
-          }
-          .print\\:p-6 {
-            padding: 0 !important;
-          }
-          /* Hide navigation bar when printing */
-          .navbar {
-            display: none !important;
-          }
-          /* Hide preview controls when printing */
-          .preview-controls {
-            display: none !important;
-          }
-          /* Ensure resume takes full page with custom margins */
-          body {
-            margin: 0.24in 0.08in 0.08in 0.08in !important;
-            padding: 0 !important;
-          }
-          /* Remove all max-width and padding for print */
-          .max-w-4xl, .max-w-6xl, .container {
-            max-width: none !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-          }
-          .p-6, .p-8, .px-4, .py-6 {
-            padding: 0 !important;
-          }
-          /* Remove background colors for clean printing */
-          .bg-gradient-to-br {
-            background: white !important;
-          }
-          .bg-base-200 {
-            background: white !important;
-          }
-          /* Ensure text is readable and properly sized */
-          .text-3xl {
-            font-size: 1.75rem !important;
-          }
-          .text-xl {
-            font-size: 1.25rem !important;
-          }
-          .text-lg {
-            font-size: 1.125rem !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

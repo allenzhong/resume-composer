@@ -16,9 +16,9 @@ const templates = [
     ),
   },
   {
-    key: 'sidebar',
-    name: 'Sidebar',
-    description: 'Personal info at top, sidebar for education/skills/certificates, main area for experiences.',
+    key: 'sidebar-left',
+    name: 'Sidebar Left',
+    description: 'Personal info at top, sidebar (left) for education/skills/certificates, main area for experiences.',
     skeleton: (
       <svg width="120" height="80" viewBox="0 0 120 80" fill="none">
         <rect x="10" y="8" width="100" height="10" rx="3" fill="#e5e7eb" />
@@ -28,13 +28,14 @@ const templates = [
     ),
   },
   {
-    key: 'modern',
-    name: 'Modern Two-Column',
-    description: 'Left: personal info, skills, certificates. Right: experiences, education.',
+    key: 'sidebar-right',
+    name: 'Sidebar Right',
+    description: 'Personal info at top, sidebar (right) for education/skills/certificates, main area for experiences.',
     skeleton: (
       <svg width="120" height="80" viewBox="0 0 120 80" fill="none">
-        <rect x="10" y="8" width="46" height="64" rx="3" fill="#a7f3d0" />
-        <rect x="64" y="8" width="46" height="64" rx="3" fill="#c7d2fe" />
+        <rect x="10" y="8" width="100" height="10" rx="3" fill="#e5e7eb" />
+        <rect x="86" y="22" width="24" height="48" rx="3" fill="#a7f3d0" />
+        <rect x="10" y="22" width="72" height="48" rx="3" fill="#c7d2fe" />
       </svg>
     ),
   },

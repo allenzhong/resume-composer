@@ -97,7 +97,7 @@ function App() {
               <Route path="/templates" element={<Templates />} />
             </Routes>
           </div>
-        </div>
+    </div>
       </Router>
     </ResumeProvider>
   );
