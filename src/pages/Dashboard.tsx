@@ -1,12 +1,15 @@
 import { useResume } from '../hooks/useResume';
 import { Download, FileText, User, Briefcase, GraduationCap, Zap } from 'lucide-react';
+import { useState } from 'react';
+import NotificationModal from '../components/NotificationModal';
 
 const Dashboard = () => {
   const { loadMockData } = useResume();
+  const [showNotification, setShowNotification] = useState(false);
 
   const handleLoadMockData = () => {
     loadMockData();
-    alert('Mock resume data loaded! Navigate to any section to see the filled data.');
+    setShowNotification(true);
   };
 
   return (
@@ -97,6 +100,14 @@ const Dashboard = () => {
           <li>• <strong>Easy Navigation:</strong> Tab-based interface for quick section switching</li>
         </ul>
       </div>
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={showNotification}
+        onClose={() => setShowNotification(false)}
+        title="Sample Resume Loaded!"
+        message="The sample resume data has been loaded successfully. Navigate to any section using the tabs above to see the filled data and start customizing your resume."
+      />
     </div>
   );
 };
