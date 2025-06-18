@@ -8,6 +8,11 @@ interface ResumeContextType {
   updateExperience: (data: ResumeData['experience']) => void;
   updateEducation: (data: ResumeData['education']) => void;
   updateSkills: (data: ResumeData['skills']) => void;
+  loadDraft: () => boolean;
+  saveDraft: () => void;
+  clearDraft: () => void;
+  autoSaveEnabled: boolean;
+  toggleAutoSave: () => void;
 }
 
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined); 

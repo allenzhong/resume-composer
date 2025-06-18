@@ -7,6 +7,64 @@ import Education from './pages/Education';
 import Skills from './pages/Skills';
 import Preview from './pages/Preview';
 import { ResumeProvider } from './context/ResumeProvider';
+import { useResume } from './hooks/useResume';
+import { Save, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import NotificationModal from './components/NotificationModal';
+
+function NavbarDraftActions() {
+  const { saveDraft, clearDraft } = useResume();
+  const [notif, setNotif] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    icon?: React.ReactNode;
+  }>({ open: false, title: '', message: '' });
+
+  return (
+    <>
+      <button
+        className="btn btn-ghost btn-circle mr-2 tooltip tooltip-bottom"
+        data-tip="Save Draft"
+        aria-label="Save Draft"
+        onClick={() => {
+          saveDraft();
+          setNotif({
+            open: true,
+            title: 'Draft Saved!',
+            message: 'Your resume draft has been saved to your browser. You can safely close or refresh the page and restore your work later.',
+            icon: <Save className="w-7 h-7 text-primary" />
+          });
+        }}
+      >
+        <Save className="w-7 h-7 text-primary" />
+      </button>
+      <button
+        className="btn btn-ghost btn-circle tooltip tooltip-bottom"
+        data-tip="Clear Draft"
+        aria-label="Clear Draft"
+        onClick={() => {
+          clearDraft();
+          setNotif({
+            open: true,
+            title: 'Draft Cleared!',
+            message: 'Your saved resume draft has been removed from your browser.',
+            icon: <Trash2 className="w-7 h-7 text-error" />
+          });
+        }}
+      >
+        <Trash2 className="w-7 h-7 text-error" />
+      </button>
+      <NotificationModal
+        isOpen={notif.open}
+        onClose={() => setNotif(n => ({ ...n, open: false }))}
+        title={notif.title}
+        message={notif.message}
+        icon={notif.icon}
+      />
+    </>
+  );
+}
 
 function App() {
   return (
@@ -22,7 +80,7 @@ function App() {
               <TabNavigation />
             </div>
             <div className="navbar-end">
-              <button className="btn btn-primary btn-outline">Export Resume</button>
+              <NavbarDraftActions />
             </div>
           </div>
 

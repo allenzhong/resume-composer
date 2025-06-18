@@ -1,6 +1,7 @@
 import { useResume } from '../../hooks/useResume';
 import { Download, Printer, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import NotificationModal from '../../components/NotificationModal';
 
 // Simple markdown renderer for basic formatting
 const renderMarkdown = (text: string) => {
@@ -25,6 +26,7 @@ const renderMarkdown = (text: string) => {
 const Preview = () => {
   const { resumeData } = useResume();
   const [showContactDetails, setShowContactDetails] = useState(true);
+  const [showPrintTip, setShowPrintTip] = useState(false);
   const { personalInfo, experience, education, skills } = resumeData;
 
   const formatDate = (dateString: string) => {
@@ -37,7 +39,7 @@ const Preview = () => {
   };
 
   const handlePrint = () => {
-    window.print();
+    setShowPrintTip(true);
   };
 
   const handleDownload = () => {
@@ -72,6 +74,33 @@ const Preview = () => {
           </button>
         </div>
       </div>
+
+      <NotificationModal
+        isOpen={showPrintTip}
+        onClose={() => setShowPrintTip(false)}
+        title="Print Tip"
+        message={"For a clean resume, please disable 'Headers and footers' in your browser's print dialog before printing or saving as PDF. This will remove the date, title, URL, and page numbers from your printout."}
+        icon={<Printer className="w-8 h-8 text-primary" />}
+        showCloseButton={true}
+      >
+        <div className="flex gap-2 justify-end mt-4">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              setShowPrintTip(false);
+              setTimeout(() => window.print(), 100);
+            }}
+          >
+            Continue to Print
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => setShowPrintTip(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </NotificationModal>
 
       {/* Resume Content */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden print:shadow-none">

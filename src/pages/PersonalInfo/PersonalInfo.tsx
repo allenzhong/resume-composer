@@ -25,12 +25,6 @@ const PersonalInfo = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Personal Info Data:', formData);
-    // Data is already saved in global state
-  };
-
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-8">
@@ -38,7 +32,7 @@ const PersonalInfo = () => {
         <p className="text-gray-600">Fill in your basic information and contact details</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-4">
         {/* Basic Information Accordion */}
         <AccordionSection 
           title="Basic Information" 
@@ -99,14 +93,7 @@ const PersonalInfo = () => {
             onInputChange={handleInputChange}
           />
         </AccordionSection>
-
-        {/* Submit Button */}
-        <div className="flex justify-end pt-6">
-          <button type="submit" className="btn btn-primary btn-lg">
-            Save Personal Information
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };

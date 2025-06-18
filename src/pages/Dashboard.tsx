@@ -1,14 +1,24 @@
 import { useResume } from '../hooks/useResume';
-import { Download, FileText, User, Briefcase, GraduationCap, Zap } from 'lucide-react';
+import { Download, FileText, User, Briefcase, GraduationCap, Zap, Upload, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import NotificationModal from '../components/NotificationModal';
 
-const Dashboard = () => {
-  const { loadMockData } = useResume();
+export default function Dashboard() {
+  const { loadMockData, loadDraft, autoSaveEnabled, toggleAutoSave } = useResume();
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   const handleLoadMockData = () => {
     loadMockData();
+    setNotificationMessage('The sample resume data has been loaded successfully. Navigate to any section using the tabs above to see the filled data and start customizing your resume.');
+    setShowNotification(true);
+  };
+
+  const handleLoadDraft = () => {
+    const found = loadDraft();
+    setNotificationMessage(found
+      ? 'Your saved resume draft has been loaded. Navigate to any section to continue editing.'
+      : 'No saved draft was found in your browser. Make sure to save a draft first.');
     setShowNotification(true);
   };
 
@@ -19,6 +29,40 @@ const Dashboard = () => {
         <p className="text-lg text-gray-600 mb-6">
           Welcome to your professional resume builder! Use the tabs above to navigate between different sections and create a comprehensive resume.
         </p>
+        <div className="alert alert-info shadow-sm mb-4">
+          <div>
+            <span className="font-semibold">Drafts:</span> Your resume is <strong>automatically saved</strong> as a draft in your browser as you edit. You can manually load your draft at any time using the <span className="inline-flex items-center"><Upload className="w-4 h-4 mx-1 text-secondary" /> Load Draft</span> button below or the <span className="inline-flex items-center"><Save className="w-4 h-4 mx-1 text-primary" /> save</span> and <span className="inline-flex items-center"><Trash2 className="w-4 h-4 mx-1 text-error" /> clear</span> icons in the top right. Clearing your draft will remove it from your browser.
+          </div>
+        </div>
+        
+        {/* Auto-save Toggle */}
+        <div className="card bg-base-100 shadow-sm mb-6">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-lg">Auto-save Settings</h3>
+                <p className="text-sm text-gray-600">Automatically save your resume as you edit</p>
+              </div>
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={autoSaveEnabled}
+                    onChange={toggleAutoSave}
+                  />
+                </label>
+              </div>
+            </div>
+            {!autoSaveEnabled && (
+              <div className="alert alert-warning mt-3">
+                <div>
+                  <span className="text-sm">Auto-save is disabled. Remember to manually save your changes using the save button in the top right.</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -31,13 +75,20 @@ const Dashboard = () => {
             <p className="text-gray-600">
               Get started quickly by loading sample resume data to see how the app works.
             </p>
-            <div className="card-actions justify-end">
+            <div className="card-actions justify-end flex flex-wrap gap-2">
               <button 
                 onClick={handleLoadMockData}
                 className="btn btn-primary"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Load Sample Resume
+              </button>
+              <button
+                onClick={handleLoadDraft}
+                className="btn btn-accent"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Load Draft
               </button>
             </div>
           </div>
@@ -105,11 +156,9 @@ const Dashboard = () => {
       <NotificationModal
         isOpen={showNotification}
         onClose={() => setShowNotification(false)}
-        title="Sample Resume Loaded!"
-        message="The sample resume data has been loaded successfully. Navigate to any section using the tabs above to see the filled data and start customizing your resume."
+        title="Notification"
+        message={notificationMessage}
       />
     </div>
   );
-};
-
-export default Dashboard; 
+} 

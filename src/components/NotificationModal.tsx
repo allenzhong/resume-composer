@@ -8,6 +8,7 @@ interface NotificationModalProps {
   message: string;
   icon?: ReactNode;
   showCloseButton?: boolean;
+  children?: ReactNode;
 }
 
 const NotificationModal = ({ 
@@ -16,7 +17,8 @@ const NotificationModal = ({
   title, 
   message, 
   icon = <CheckCircle className="w-8 h-8 text-success" />,
-  showCloseButton = true 
+  showCloseButton = true,
+  children
 }: NotificationModalProps) => {
   if (!isOpen) return null;
 
@@ -49,16 +51,18 @@ const NotificationModal = ({
           
           {/* Content */}
           <p className="text-gray-600 mb-6">{message}</p>
-          
-          {/* Actions */}
-          <div className="flex justify-end">
-            <button
-              onClick={onClose}
-              className="btn btn-primary btn-sm"
-            >
-              Got it!
-            </button>
-          </div>
+          {children ? (
+            <div>{children}</div>
+          ) : (
+            <div className="flex justify-end">
+              <button
+                onClick={onClose}
+                className="btn btn-primary btn-sm"
+              >
+                Got it!
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
