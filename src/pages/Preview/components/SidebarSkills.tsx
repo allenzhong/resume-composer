@@ -8,7 +8,7 @@ interface SidebarSkillsProps {
 const SidebarSkills: React.FC<SidebarSkillsProps> = ({ skills }) => {
   if (!skills.length || !skills.some(cat => cat.skills.some(skill => skill.name))) return null;
   return (
-    <div className="mb-6">
+    <div className="mb-6 sidebar-section">
       <h3 className="font-semibold text-md text-gray-700 mb-2">Skills</h3>
       <ul className="flex flex-wrap gap-2">
         {skills.map((category) =>

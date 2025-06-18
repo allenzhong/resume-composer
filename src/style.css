@@ -13,11 +13,20 @@
     display: none !important;
   }
   
+  /* Prevent extra blank page in Chrome */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
   /* Ensure clean printing with custom margins */
   body {
     margin: 0.24in 0.08in 0.08in 0.08in !important;
     padding: 0 !important;
     background: white !important;
+    min-height: auto !important;
   }
   
   /* Remove all max-width and padding for print */
@@ -55,5 +64,52 @@
   
   .text-lg {
     font-size: 1.125rem !important;
+  }
+  
+  /* Sidebar specific print styles - works for both left and right sidebars */
+  .sidebar-section ul {
+    margin: 0.2em 0 !important;
+    padding-left: 0.5em !important;
+  }
+  
+  .sidebar-section ul li {
+    margin-bottom: 0.1em !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Remove br tags in sidebar */
+  .sidebar-section br {
+    display: none !important;
+  }
+  
+  /* Reduce spacing for sidebar skills */
+  .sidebar-section .flex.flex-wrap.gap-2 {
+    gap: 0.1rem !important;
+  }
+  
+  .sidebar-section .flex.flex-wrap.gap-2 li {
+    margin: 0.05em 0.1em !important;
+    padding: 0.1em 0.3em !important;
+  }
+  
+  /* Reduce spacing for sidebar education */
+  .sidebar-section .space-y-1 > li {
+    margin-bottom: 0.1em !important;
+  }
+  
+  .sidebar-section .space-y-1 > li span {
+    line-height: 1.1 !important;
+  }
+  
+  /* Prevent page breaks within resume sections */
+  .bg-white {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Ensure resume content doesn't overflow */
+  .bg-white > div {
+    max-height: none !important;
+    overflow: visible !important;
   }
 }
