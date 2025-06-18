@@ -8,6 +8,7 @@ import { Upload, AlertTriangle } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'resume-composer-draft';
 const AUTO_SAVE_KEY = 'resume-composer-auto-save';
+const TEMPLATE_KEY = 'resume-composer-template';
 
 interface ResumeProviderProps {
   children: ReactNode;
@@ -53,6 +54,15 @@ export const ResumeProvider = ({ children }: ResumeProviderProps) => {
   const [draftModalHandled, setDraftModalHandled] = useState(false);
   // Ref to know if a draft existed on mount
   const draftExistedOnMount = useRef(false);
+
+  // Template state
+  const [template, setTemplateState] = useState(() => {
+    return localStorage.getItem(TEMPLATE_KEY) || 'classic';
+  });
+  const setTemplate = useCallback((tpl: string) => {
+    setTemplateState(tpl);
+    localStorage.setItem(TEMPLATE_KEY, tpl);
+  }, []);
 
   // Show modal on every mount if a draft exists
   useEffect(() => {
@@ -171,6 +181,8 @@ export const ResumeProvider = ({ children }: ResumeProviderProps) => {
       clearDraft,
       autoSaveEnabled,
       toggleAutoSave,
+      template,
+      setTemplate,
     }}>
       {children}
       <NotificationModal

@@ -6,6 +6,7 @@ import Experience from './pages/Experience';
 import Education from './pages/Education';
 import Skills from './pages/Skills';
 import Preview from './pages/Preview';
+import Templates from './pages/Templates';
 import { ResumeProvider } from './context/ResumeProvider';
 import { useResume } from './hooks/useResume';
 import { Save, Trash2 } from 'lucide-react';
@@ -93,6 +94,7 @@ function App() {
               <Route path="/education" element={<Education />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/preview" element={<Preview />} />
+              <Route path="/templates" element={<Templates />} />
             </Routes>
           </div>
         </div>

@@ -13,6 +13,8 @@ interface ResumeContextType {
   clearDraft: () => void;
   autoSaveEnabled: boolean;
   toggleAutoSave: () => void;
+  template: string;
+  setTemplate: (template: string) => void;
 }
 
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined); 

@@ -5,7 +5,8 @@ import {
   Briefcase, 
   GraduationCap, 
   Zap, 
-  Eye 
+  Eye, 
+  LayoutGrid 
 } from 'lucide-react';
 
 const TabNavigation = () => {
@@ -17,6 +18,7 @@ const TabNavigation = () => {
     { path: '/experience', label: 'Experience', icon: Briefcase },
     { path: '/education', label: 'Education', icon: GraduationCap },
     { path: '/skills', label: 'Skills', icon: Zap },
+    { path: '/templates', label: 'Templates', icon: LayoutGrid },
     { path: '/preview', label: 'Preview', icon: Eye },
   ];
 

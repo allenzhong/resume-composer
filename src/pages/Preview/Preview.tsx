@@ -24,7 +24,7 @@ const renderMarkdown = (text: string) => {
 };
 
 const Preview = () => {
-  const { resumeData } = useResume();
+  const { resumeData, template } = useResume();
   const [showContactDetails, setShowContactDetails] = useState(true);
   const [showPrintTip, setShowPrintTip] = useState(false);
   const { personalInfo, experience, education, skills } = resumeData;
@@ -46,6 +46,224 @@ const Preview = () => {
     // TODO: Implement PDF download functionality
     alert('PDF download functionality will be implemented soon!');
   };
+
+  // Section renderers
+  const renderHeader = () => (
+    <div className="border-b-2 border-gray-300 pb-6 mb-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {personalInfo.firstName} {personalInfo.lastName}
+          </h1>
+          {personalInfo.title && (
+            <p className="text-xl text-gray-600 mb-2">{personalInfo.title}</p>
+          )}
+          {personalInfo.location && (
+            <p className="text-gray-600">{personalInfo.location}</p>
+          )}
+        </div>
+        {showContactDetails && (
+          <div className="text-right text-sm text-gray-600">
+            {personalInfo.email && (
+              <p className="mb-1">{personalInfo.email}</p>
+            )}
+            {personalInfo.phone && (
+              <p className="mb-1">{personalInfo.phone}</p>
+            )}
+            {personalInfo.website && (
+              <p className="mb-1">
+                <a href={personalInfo.website} target="_blank" rel="noopener noreferrer" 
+                   className="text-blue-600 hover:underline">
+                  {personalInfo.website.replace(/^https?:\/\//, '')}
+                </a>
+              </p>
+            )}
+            {(personalInfo.github || personalInfo.linkedin) && (
+              <div className="mt-2">
+                {personalInfo.github && (
+                  <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" 
+                     className="text-blue-600 hover:underline block">
+                    GitHub
+                  </a>
+                )}
+                {personalInfo.linkedin && (
+                  <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" 
+                     className="text-blue-600 hover:underline block">
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderPersonalStatement = () => personalInfo.personalStatement && (
+    <div className="mb-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-3 border-b border-gray-200 pb-1">
+        Professional Summary
+      </h2>
+      <div 
+        className="text-gray-700 leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: renderMarkdown(personalInfo.personalStatement) }}
+      />
+    </div>
+  );
+
+  const renderExperience = () => experience.length > 0 && experience[0].jobTitle && (
+    <div className="mb-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
+        Professional Experience
+      </h2>
+      <div className="space-y-4">
+        {experience.map((exp) => (
+          <div key={exp.id} className="mb-4">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800">{exp.jobTitle}</h3>
+                <p className="text-gray-600">{exp.company}</p>
+              </div>
+              <div className="text-right text-sm text-gray-600">
+                <p>{formatDate(exp.startDate)} - {formatDate(exp.endDate)}</p>
+                {exp.location && <p>{exp.location}</p>}
+              </div>
+            </div>
+            {exp.description && (
+              <div 
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(exp.description) }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderEducation = () => education.length > 0 && education[0].degree && (
+    <div className="mb-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
+        Education
+      </h2>
+      <div className="space-y-4">
+        {education.map((edu) => (
+          <div key={edu.id} className="mb-4">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800">{edu.degree}</h3>
+                <p className="text-gray-600">{edu.institution}</p>
+              </div>
+              <div className="text-right text-sm text-gray-600">
+                <p>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</p>
+                {edu.location && <p>{edu.location}</p>}
+                {edu.gpa && <p>GPA: {edu.gpa}</p>}
+              </div>
+            </div>
+            {edu.description && (
+              <div 
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(edu.description) }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderSkills = () => skills.length > 0 && skills.some(cat => cat.skills.some(skill => skill.name)) && (
+    <div className="mb-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
+        Skills & Certifications
+      </h2>
+      <div className="space-y-4">
+        {skills.map((category) => {
+          const validSkills = category.skills.filter(skill => skill.name);
+          if (validSkills.length === 0) return null;
+          return (
+            <div key={category.id} className="mb-4">
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">{category.name}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {validSkills.map((skill) => (
+                  <div key={skill.id} className="mb-3">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-medium text-gray-800">{skill.name}</span>
+                      {skill.proficiency && (
+                        <span className="text-sm text-gray-600">{skill.proficiency}</span>
+                      )}
+                    </div>
+                    {skill.description && (
+                      <div 
+                        className="text-sm text-gray-700 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: renderMarkdown(skill.description) }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  // Layouts
+  const renderClassic = () => (
+    <div>
+      {renderHeader()}
+      {renderPersonalStatement()}
+      {renderExperience()}
+      {renderEducation()}
+      {renderSkills()}
+    </div>
+  );
+
+  const renderSidebar = () => (
+    <div>
+      {renderHeader()}
+      {renderPersonalStatement()}
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/3 w-full">
+          {renderEducation()}
+          {renderSkills()}
+        </div>
+        <div className="md:w-2/3 w-full">
+          {renderExperience()}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderModern = () => (
+    <div className="flex flex-col md:flex-row gap-8">
+      <div className="md:w-1/2 w-full">
+        {renderHeader()}
+        {renderSkills()}
+      </div>
+      <div className="md:w-1/2 w-full">
+        {renderPersonalStatement()}
+        {renderExperience()}
+        {renderEducation()}
+      </div>
+    </div>
+  );
+
+  let content;
+  switch (template) {
+    case 'sidebar':
+      content = renderSidebar();
+      break;
+    case 'modern':
+      content = renderModern();
+      break;
+    case 'classic':
+    default:
+      content = renderClassic();
+      break;
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -105,171 +323,7 @@ const Preview = () => {
       {/* Resume Content */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden print:shadow-none">
         <div className="p-8 print:p-6">
-          {/* Header */}
-          <div className="border-b-2 border-gray-300 pb-6 mb-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                  {personalInfo.firstName} {personalInfo.lastName}
-                </h1>
-                {personalInfo.title && (
-                  <p className="text-xl text-gray-600 mb-2">{personalInfo.title}</p>
-                )}
-                {personalInfo.location && (
-                  <p className="text-gray-600">{personalInfo.location}</p>
-                )}
-              </div>
-              {showContactDetails && (
-                <div className="text-right text-sm text-gray-600">
-                  {personalInfo.email && (
-                    <p className="mb-1">{personalInfo.email}</p>
-                  )}
-                  {personalInfo.phone && (
-                    <p className="mb-1">{personalInfo.phone}</p>
-                  )}
-                  {personalInfo.website && (
-                    <p className="mb-1">
-                      <a href={personalInfo.website} target="_blank" rel="noopener noreferrer" 
-                         className="text-blue-600 hover:underline">
-                        {personalInfo.website.replace(/^https?:\/\//, '')}
-                      </a>
-                    </p>
-                  )}
-                  {(personalInfo.github || personalInfo.linkedin) && (
-                    <div className="mt-2">
-                      {personalInfo.github && (
-                        <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" 
-                           className="text-blue-600 hover:underline block">
-                          GitHub
-                        </a>
-                      )}
-                      {personalInfo.linkedin && (
-                        <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" 
-                           className="text-blue-600 hover:underline block">
-                          LinkedIn
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Personal Statement */}
-          {personalInfo.personalStatement && (
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-3 border-b border-gray-200 pb-1">
-                Professional Summary
-              </h2>
-              <div 
-                className="text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(personalInfo.personalStatement) }}
-              />
-            </div>
-          )}
-
-          {/* Experience */}
-          {experience.length > 0 && experience[0].jobTitle && (
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-                Professional Experience
-              </h2>
-              <div className="space-y-4">
-                {experience.map((exp) => (
-                  <div key={exp.id} className="mb-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-lg text-gray-800">{exp.jobTitle}</h3>
-                        <p className="text-gray-600">{exp.company}</p>
-                      </div>
-                      <div className="text-right text-sm text-gray-600">
-                        <p>{formatDate(exp.startDate)} - {formatDate(exp.endDate)}</p>
-                        {exp.location && <p>{exp.location}</p>}
-                      </div>
-                    </div>
-                    {exp.description && (
-                      <div 
-                        className="text-gray-700 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: renderMarkdown(exp.description) }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Education */}
-          {education.length > 0 && education[0].degree && (
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-                Education
-              </h2>
-              <div className="space-y-4">
-                {education.map((edu) => (
-                  <div key={edu.id} className="mb-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-lg text-gray-800">{edu.degree}</h3>
-                        <p className="text-gray-600">{edu.institution}</p>
-                      </div>
-                      <div className="text-right text-sm text-gray-600">
-                        <p>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</p>
-                        {edu.location && <p>{edu.location}</p>}
-                        {edu.gpa && <p>GPA: {edu.gpa}</p>}
-                      </div>
-                    </div>
-                    {edu.description && (
-                      <div 
-                        className="text-gray-700 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: renderMarkdown(edu.description) }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Skills */}
-          {skills.length > 0 && skills.some(cat => cat.skills.some(skill => skill.name)) && (
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-1">
-                Skills & Certifications
-              </h2>
-              <div className="space-y-4">
-                {skills.map((category) => {
-                  const validSkills = category.skills.filter(skill => skill.name);
-                  if (validSkills.length === 0) return null;
-                  
-                  return (
-                    <div key={category.id} className="mb-4">
-                      <h3 className="font-semibold text-lg text-gray-800 mb-2">{category.name}</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {validSkills.map((skill) => (
-                          <div key={skill.id} className="mb-3">
-                            <div className="flex justify-between items-start mb-1">
-                              <span className="font-medium text-gray-800">{skill.name}</span>
-                              {skill.proficiency && (
-                                <span className="text-sm text-gray-600">{skill.proficiency}</span>
-                              )}
-                            </div>
-                            {skill.description && (
-                              <div 
-                                className="text-sm text-gray-700 leading-relaxed"
-                                dangerouslySetInnerHTML={{ __html: renderMarkdown(skill.description) }}
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          {content}
         </div>
       </div>
 
