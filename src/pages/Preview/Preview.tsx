@@ -251,7 +251,7 @@ const Preview = () => {
             box-shadow: none !important;
           }
           .print\\:p-6 {
-            padding: 1.5rem !important;
+            padding: 0 !important;
           }
           /* Hide navigation bar when printing */
           .navbar {
@@ -261,9 +261,18 @@ const Preview = () => {
           .preview-controls {
             display: none !important;
           }
-          /* Ensure resume takes full page */
+          /* Ensure resume takes full page with custom margins */
           body {
-            margin: 0 !important;
+            margin: 0.24in 0.08in 0.08in 0.08in !important;
+            padding: 0 !important;
+          }
+          /* Remove all max-width and padding for print */
+          .max-w-4xl, .max-w-6xl, .container {
+            max-width: none !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+          .p-6, .p-8, .px-4, .py-6 {
             padding: 0 !important;
           }
           /* Remove background colors for clean printing */
@@ -272,6 +281,16 @@ const Preview = () => {
           }
           .bg-base-200 {
             background: white !important;
+          }
+          /* Ensure text is readable and properly sized */
+          .text-3xl {
+            font-size: 1.75rem !important;
+          }
+          .text-xl {
+            font-size: 1.25rem !important;
+          }
+          .text-lg {
+            font-size: 1.125rem !important;
           }
         }
       `}</style>
