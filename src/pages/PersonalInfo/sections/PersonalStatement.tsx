@@ -20,6 +20,7 @@ const PersonalStatement = ({ formData, onInputChange }: PersonalStatementProps) 
       helperText="Brief description of your professional background and goals."
       showCharCount
       maxLength={MAX_LENGTH}
+      markdown
       autoComplete="off"
       value={formData.personalStatement}
       onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onInputChange('personalStatement', e.target.value)}

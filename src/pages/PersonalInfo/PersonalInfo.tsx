@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { 
   User, 
   Phone, 
@@ -12,68 +11,24 @@ import ContactInformation from './sections/ContactInformation';
 import Address from './sections/Address';
 import PersonalStatement from './sections/PersonalStatement';
 import SocialMediaLinks from './sections/SocialMediaLinks';
-
-interface PersonalInfoData {
-  // Basic Information
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  website: string;
-  
-  // Address
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  
-  // Personal Statement
-  personalStatement: string;
-  
-  // Social Media Links
-  github: string;
-  linkedin: string;
-  portfolio: string;
-  twitter: string;
-  
-  // Additional Info
-  title: string;
-  location: string;
-}
+import { useResume } from '../../hooks/useResume';
+import type { PersonalInfoData } from '../../types/resume';
 
 const PersonalInfo = () => {
-  const [formData, setFormData] = useState<PersonalInfoData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    website: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    personalStatement: '',
-    github: '',
-    linkedin: '',
-    portfolio: '',
-    twitter: '',
-    title: '',
-    location: '',
-  });
+  const { resumeData, updatePersonalInfo } = useResume();
+  const formData = resumeData.personalInfo;
 
   const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
+    updatePersonalInfo({
+      ...formData,
       [field]: value
-    }));
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Personal Info Data:', formData);
-    // TODO: Save to global state or localStorage
+    // Data is already saved in global state
   };
 
   return (

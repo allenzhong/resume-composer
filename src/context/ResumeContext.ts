@@ -1,0 +1,13 @@
+import { createContext } from 'react';
+import type { ResumeData } from '../types/resume';
+
+interface ResumeContextType {
+  resumeData: ResumeData;
+  loadMockData: () => void;
+  updatePersonalInfo: (data: ResumeData['personalInfo']) => void;
+  updateExperience: (data: ResumeData['experience']) => void;
+  updateEducation: (data: ResumeData['education']) => void;
+  updateSkills: (data: ResumeData['skills']) => void;
+}
+
+export const ResumeContext = createContext<ResumeContextType | undefined>(undefined); 

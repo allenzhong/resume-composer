@@ -1,2 +1,35 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Global print styles */
+@media print {
+  /* Hide navigation bar when printing */
+  .navbar {
+    display: none !important;
+  }
+  
+  /* Hide any preview controls when printing */
+  .preview-controls {
+    display: none !important;
+  }
+  
+  /* Ensure clean printing */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  /* Remove background colors for clean printing */
+  .bg-gradient-to-br {
+    background: white !important;
+  }
+  
+  .bg-base-200 {
+    background: white !important;
+  }
+  
+  .bg-base-100 {
+    background: white !important;
+  }
+}
