@@ -1,5 +1,7 @@
 # Resume Composer
 
+[🌐 Live Demo](https://resume-composer-trial.netlify.app/)
+
 A modern, professional, and highly customizable resume builder built with React, Vite, DaisyUI, and TypeScript.
 
 ## ✨ Features
